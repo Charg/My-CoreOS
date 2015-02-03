@@ -1,0 +1,13 @@
+[Unit]
+Description=DNS Discovery
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill dnsdisco
+ExecStartPre=-/usr/bin/docker rm dnsdisco
+ExecStartPre=-/usr/bin/docker pull sadmin/dnsdisco
+ExecStart=/usr/bin/docker run --rm --name dnsdisco sadmin/dnsdisco
+ExecStop=/usr/bin/docker stop dnsdisco
