@@ -1,0 +1,17 @@
+[Unit]
+Description=synergizing
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill synergizing
+ExecStartPre=-/usr/bin/docker rm synergizing
+ExecStart=/usr/bin/docker run --rm --name synergizing -p 80:8080 sadmin/synergizing
+ExecStartPost=/usr/bin/etcdctl set /service/dns/synergizing.argeros.org ${COREOS_PUBLIC_IPV4}
+ExecStop=/usr/bin/docker stop synergizing
+ExecStopPost=/usr/bin/etcdctl rm /service/dns/synergizing.argeros.org
+
+[X-Fleet]
+Conflicts=ctfd*
